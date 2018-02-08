@@ -27,11 +27,13 @@ export default class Paddle {
 
 
     moveUp() {
-        this.y -= this.speed;
+        // get the max number
+        // either 0 or the y position minus speed
+        this.y = Math.max( 0, this.y - this.speed);
     }
 
     moveDown() {
-        this.y += this.speed;
+        this.y = Math.min(this.boardHeight - this.height, this.y + this.speed)
     }
 
     //...
