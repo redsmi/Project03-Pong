@@ -9,13 +9,7 @@ export default class Ball {
       this.direction = 1;
       this.reset();
 
-      // document.addEventListener('keydown', event => {
-      //   switch(event.key) {
-      //     case KEYS.spaceBar:
-      //       this.pause = !this.pause;
-      //       break;
-      //   }
-      // });
+      this.ping = new Audio('public/sounds/pong-01.wav');
     }
 
     reset () {
@@ -57,6 +51,7 @@ export default class Ball {
         )
         {
           this.vx = -this.vx;
+          this.ping.play();
         }
       } else { //ball going left, to player1
             let paddle = player1.coordinates(player1.x, player1.y, player1.width, player1.height);
@@ -68,7 +63,7 @@ export default class Ball {
             )
             {
               this.vx = -this.vx;
-              // add sound
+              this.ping.play();
             }
       }
     }  
