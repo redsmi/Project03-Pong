@@ -26,7 +26,8 @@ export default class Game {
 			this.boardGap, // x = 10
 			((this.height - this.paddleHeight) / 2), // y = (256-56)/2 = 100
 			KEYS.a,
-			KEYS.z	
+			KEYS.z,
+			'player1'	
 		);
 
 		console.log(this.player1);
@@ -38,7 +39,8 @@ export default class Game {
 			(this.width - this.boardGap - this.paddleWidth),
 			((this.height - this.paddleHeight) / 2), // y = (256-56)/2 = 100
 			KEYS.up,
-			KEYS.down	
+			KEYS.down,
+			'player2'	
 		);
 		console.log(this.player2);
 

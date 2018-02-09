@@ -1,7 +1,7 @@
 import { SVG_NS } from '../settings';
 
 export default class Paddle {
-    constructor(boardHeight, width, height, x, y, up, down) { // color, upKey, downKey
+    constructor(boardHeight, width, height, x, y, up, down, player) { // color, upKey, downKey
       this.boardHeight = boardHeight;
       this.width = width;
       this.height = height;
@@ -9,20 +9,26 @@ export default class Paddle {
       this.y = y;
       this.speed = 10;
       this.score = 0;
-    //   this.up = up;
-    //   this.down = down;
 
-
+      this.player = player;
+      this.keyState = {};
       document.addEventListener('keydown', event => {
-        switch (event.key) {
-            case up:
-              this.moveUp();
-              break;
-            case down:
-              this.moveDown();
-              break;
-          }
-      }); //key event end
+        this.keyState[event.key || event.which] = true;
+      }, true);
+      document.addEventListener('keyup', event => {
+        this.keyState[event.key || event.which] = false;
+      }, true);
+
+      // document.addEventListener('keydown', event => {
+      //   switch (event.key) {
+      //       case up:
+      //         this.moveUp();
+      //         break;
+      //       case down:
+      //         this.moveDown();
+      //         break;
+      //     }
+      // }); //key event end
     } // constructor end
 
 
@@ -46,6 +52,21 @@ export default class Paddle {
     
     //...
     render(svg) {
+
+      // Player movement
+    if (this.keyState['a'] && this.player === 'player1') {
+      this.moveUp();
+    }
+    if (this.keyState['z'] && this.player === 'player1') {
+      this.moveDown();
+    }
+    if (this.keyState['ArrowUp'] && this.player === 'player2') {
+      this.moveUp();
+    }
+    if (this.keyState['ArrowDown'] && this.player === 'player2') {
+      this.moveDown();
+    }
+
         let rect = document.createElementNS(SVG_NS, 'rect');
         rect.setAttributeNS(null, 'fill', 'white');
 		rect.setAttributeNS(null, 'width', this.width);
