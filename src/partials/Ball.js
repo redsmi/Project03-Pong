@@ -14,12 +14,12 @@ export default class Ball {
 		this.y = this.boardHeight / 2;
     }
 
-    render(svg) {
+    render(svg, player1, player2) {
         let ball = document.createElementNS(SVG_NS, 'circle');
-        ball.setAttributeNS(null, 'r', '8');
+        ball.setAttributeNS(null, 'r', this.radius);
 		ball.setAttributeNS(null, 'cx', this.x );
 		ball.setAttributeNS(null, 'cy', this.y );
-		ball.setAttributeNS(null, 'fill', '#fff');
+		ball.setAttributeNS(null, 'fill', 'white');
 
 		svg.appendChild(ball);
 	}

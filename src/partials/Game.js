@@ -42,7 +42,7 @@ export default class Game {
 		console.log(this.player2);
 
 		this.ball = new Ball(
-			this.ballRadius,
+			8,
 			this.width,
 			this.height
 		);
@@ -62,7 +62,7 @@ export default class Game {
 		this.player1.render(svg);
 		this.player2.render(svg);
 
-		this.ball.render(svg);
+		this.ball.render(svg, player1, player2);
 
 		this.gameElement.appendChild(svg);
 	}
