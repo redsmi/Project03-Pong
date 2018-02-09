@@ -1,4 +1,5 @@
 import { SVG_NS } from '../settings';
+import Paddle from './Paddle';
 
 export default class Ball {
     constructor(radius, boardWidth, boardHeight) {
@@ -24,7 +25,7 @@ export default class Ball {
     this.vy = 0;
     while ( this.vy === 0 ) { // run until it equals something not 0
       this.vy = Math.floor(Math.random() * 10 - 5); // -5 to +4 hmm
-      this.vx = this.direction * (6 - Math.abs(this.vy));
+      this.vx = this.direction * (8 - Math.abs(this.vy));
     }
 
     } //creating instance variable in method, we call this method right away in constructor
@@ -39,7 +40,7 @@ export default class Ball {
         this.vy = -this.vy;
       } else if (hitLeft || hitRight) {
         // this.reset();
-        this.vx= -this.vx;
+        // this.vx= -this.vx;
         // add sound
       }
     }
@@ -72,21 +73,36 @@ export default class Ball {
       }
     }  
 
+    goal(playerPassIn) {
+      playerPassIn.score++;
+      this.reset();
+      console.log(playerPassIn.score);
+    }
+
     render(svg, player1, player2) {
-    
-    this.x += this.vx;
-    this.y += this.vy;
-    
-    this.wallCollision();
-    this.paddleCollision(player1, player2);
+      
+      this.x += this.vx;
+      this.y += this.vy;
+      
+      this.wallCollision();
+      this.paddleCollision(player1, player2);
 
-    //draw ball
-    let ball = document.createElementNS(SVG_NS, 'circle');
-    ball.setAttributeNS(null, 'r', this.radius);
-		ball.setAttributeNS(null, 'cx', this.x );
-		ball.setAttributeNS(null, 'cy', this.y );
-		ball.setAttributeNS(null, 'fill', 'white');
+      //draw ball
+      let ball = document.createElementNS(SVG_NS, 'circle');
+      ball.setAttributeNS(null, 'r', this.radius);
+      ball.setAttributeNS(null, 'cx', this.x );
+      ball.setAttributeNS(null, 'cy', this.y );
+      ball.setAttributeNS(null, 'fill', 'white');
+      svg.appendChild(ball);
 
-    svg.appendChild(ball);
+      const rightGoal = this.x + this.radius >= this.boardWidth;
+      const leftGoal = this.x - this.radius <= 0; //same as wall collision but simpler doing it here
+      if(rightGoal) {
+        this.goal(player1);
+        this.direction = -this.direction;
+      } else if (leftGoal) {
+        this.goal(player2);
+        this.direction = -this.direction;
+      }
 	}
 }
