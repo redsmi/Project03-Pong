@@ -7,6 +7,14 @@ export default class Ball {
       this.boardHeight = boardHeight;
       this.direction = 1;
       this.reset();
+
+      // document.addEventListener('keydown', event => {
+      //   switch(event.key) {
+      //     case KEYS.spaceBar:
+      //       this.pause = !this.pause;
+      //       break;
+      //   }
+      // });
     }
 
     reset () {
@@ -32,14 +40,45 @@ export default class Ball {
       } else if (hitLeft || hitRight) {
         // this.reset();
         this.vx= -this.vx;
+        // add sound
       }
     }
 
+    paddleCollision(player1, player2) {
+      if (this.vx > 0) { //ball going right, to player2
+        let paddle = player2.coordinates(player2.x, player2.y, player2.width, player2.height);
+        let [leftX, rightX, topY, bottomY] = paddle;
+
+        if (
+          (this.x + this.radius >= leftX)
+          && (this.x + this.radius <= rightX)
+          && (this.y >= topY && this.y <= bottomY)
+        )
+        {
+          this.vx = -this.vx;
+        }
+      } else { //ball going left, to player1
+            let paddle = player1.coordinates(player1.x, player1.y, player1.width, player1.height);
+            let [leftX, rightX, topY, bottomY] = paddle;
+            if (
+              (this.x - this.radius <= rightX)
+              && (this.x - this.radius >= leftX)
+              && (this.y >= topY && this.y <= bottomY)
+            )
+            {
+              this.vx = -this.vx;
+              // add sound
+            }
+      }
+    }  
+
     render(svg, player1, player2) {
+    
     this.x += this.vx;
     this.y += this.vy;
     
     this.wallCollision();
+    this.paddleCollision(player1, player2);
 
     //draw ball
     let ball = document.createElementNS(SVG_NS, 'circle');
