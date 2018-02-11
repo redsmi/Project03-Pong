@@ -2,7 +2,7 @@ import { SVG_NS } from '../settings';
 import Paddle from './Paddle';
 
 export default class Ball {
-    constructor(radius, boardWidth, boardHeight) {
+    constructor(radius, boardWidth, boardHeight, game) {
       this.radius = radius;
       this.boardWidth = boardWidth;
       this.boardHeight = boardHeight;
@@ -10,6 +10,7 @@ export default class Ball {
       this.reset();
 
       this.ping = new Audio('public/sounds/pong-01.wav');
+      this.game = game;
     }
 
     reset () {
@@ -70,8 +71,18 @@ export default class Ball {
 
     goal(playerPassIn) {
       playerPassIn.score++;
+      this.gameFin(playerPassIn); //check if game is over
       this.reset();
       console.log(playerPassIn.score);
+    }
+
+    gameFin(playerPassIn){
+      if (playerPassIn.score === 5) {
+        this.game.currentMessage = 'David was here';
+        this.game.pause = true;
+        this.game.gameOver = true;
+        // move reset here, if 10 pause, if not 10 reset
+      }
     }
 
     render(svg, player1, player2) {

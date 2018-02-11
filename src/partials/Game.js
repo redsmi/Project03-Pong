@@ -3,8 +3,9 @@ import Board from './Board';
 import Paddle from './Paddle';
 import Ball from './Ball';
 import Score from './Score';
+import Message from './Message';
 
-export default class Game {
+export default class Game { // imported in index.js const game = new Game('game', 512, 256);
 
 	constructor(element, width, height) {
 		this.element = element; // element = div id=game
@@ -14,11 +15,10 @@ export default class Game {
 		// Other code goes here...
 		this.board = new Board(this.width, this.height);
 
-
 		this.paddleWidth = 8;
 		this.paddleHeight = 56;
 		this.boardGap = 10;
-	
+		 
 		this.player1 = new Paddle(
 			this.height,
 			this.paddleWidth,
@@ -27,7 +27,7 @@ export default class Game {
 			((this.height - this.paddleHeight) / 2), // y = (256-56)/2 = 100
 			KEYS.a,
 			KEYS.z,
-			'player1'	
+			'player1'
 		);
 
 		console.log(this.player1);
@@ -40,21 +40,23 @@ export default class Game {
 			((this.height - this.paddleHeight) / 2), // y = (256-56)/2 = 100
 			KEYS.up,
 			KEYS.down,
-			'player2'	
+			'player2'
 		);
 		console.log(this.player2);
 
 		this.ball = new Ball(
 			8,
 			this.width,
-			this.height
+			this.height,
+			this // hmmm
 		);
 
-		// this.ball2 = new Ball(
-		// 	12,
-		// 	this.width,
-		// 	this.height
-		// );
+		this.ball2 = new Ball(
+			20,
+			this.width,
+			this.height,
+			this // pass in game
+		);
 
 		// this.ball3 = new Ball(
 		// 	20,
@@ -68,16 +70,26 @@ export default class Game {
 				this.pause = !this.pause;
 				break;
 			}
-		  });
+		});
 
 		this.score1 = new Score(this.width / 2 -50, 30, 30);
 		this.score2 = new Score(this.width / 2 +25, 30, 30); 
+
+		this.message = new Message(this.width/2, this.height/2, 50);
+		this.currentMessage = '';
 	} // end of constructor
 
 	render() {
 		// More code goes here...
 		if(this.pause) {
 			return;
+		}
+
+		if (this.gameOver) {
+			this.currentMessage = '';
+			this.player1.score = 0;
+			this.player2.score = 0;
+			this.gameOver = false;
 		}
 
 		this.gameElement.innerHTML = ''; //prevent infinite create
@@ -94,12 +106,13 @@ export default class Game {
 		this.player2.render(svg);
 
 		this.ball.render(svg, this.player1, this.player2);
-		// this.ball2.render(svg);
+		this.ball2.render(svg, this.player1, this.player2);
 		// this.ball3.render(svg);
 
 		this.score1.render(svg, this.player1.score); //score is attached to player1/2 in the paddle class
 		this.score2.render(svg, this.player2.score);
 		
+		this.message.render(svg, this.currentMessage);
 	}
 
 }

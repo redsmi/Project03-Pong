@@ -3,7 +3,7 @@ import Game from './partials/Game'
 
 // create a game instance, instantiating Game
 const game = new Game('game', 512, 256);
-// reference to div id=game, giving it width and height
+// reference to index.html div id=game, giving it width and height
 (function gameLoop() {
     game.render();
     // console.log('something')
