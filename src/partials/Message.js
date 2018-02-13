@@ -16,6 +16,5 @@ export default class Message {
         text.setAttributeNS(null, 'fill', 'white');
         text.textContent = message;
         svg.appendChild(text);
-        // console.log(message);
     }
   }

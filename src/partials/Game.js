@@ -75,7 +75,7 @@ export default class Game { // imported in index.js const game = new Game('game'
 		this.score1 = new Score(this.width / 2 -50, 30, 30);
 		this.score2 = new Score(this.width / 2 +25, 30, 30); 
 
-		this.message = new Message(this.width/2, this.height/2, 50);
+		this.message = new Message(this.width/2 -75, this.height/2, 30);
 		this.currentMessage = '';
 	} // end of constructor
 

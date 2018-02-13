@@ -231,15 +231,21 @@ var _Ball = __webpack_require__(6);
 
 var _Ball2 = _interopRequireDefault(_Ball);
 
-var _Score = __webpack_require__(8);
+var _Score = __webpack_require__(9);
 
 var _Score2 = _interopRequireDefault(_Score);
+
+var _Message = __webpack_require__(8);
+
+var _Message2 = _interopRequireDefault(_Message);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Game = function () {
+	// imported in index.js const game = new Game('game', 512, 256);
+
 	function Game(element, width, height) {
 		var _this = this;
 
@@ -266,13 +272,11 @@ var Game = function () {
 		_settings.KEYS.up, _settings.KEYS.down, 'player2');
 		console.log(this.player2);
 
-		this.ball = new _Ball2.default(8, this.width, this.height);
+		this.ball = new _Ball2.default(8, this.width, this.height, this // hmmm
+		);
 
-		// this.ball2 = new Ball(
-		// 	12,
-		// 	this.width,
-		// 	this.height
-		// );
+		this.ball2 = new _Ball2.default(20, this.width, this.height, this // pass in game
+		);
 
 		// this.ball3 = new Ball(
 		// 	20,
@@ -290,6 +294,9 @@ var Game = function () {
 
 		this.score1 = new _Score2.default(this.width / 2 - 50, 30, 30);
 		this.score2 = new _Score2.default(this.width / 2 + 25, 30, 30);
+
+		this.message = new _Message2.default(this.width / 2 - 75, this.height / 2, 30);
+		this.currentMessage = '';
 	} // end of constructor
 
 	_createClass(Game, [{
@@ -298,6 +305,13 @@ var Game = function () {
 			// More code goes here...
 			if (this.pause) {
 				return;
+			}
+
+			if (this.gameOver) {
+				this.currentMessage = '';
+				this.player1.score = 0;
+				this.player2.score = 0;
+				this.gameOver = false;
 			}
 
 			this.gameElement.innerHTML = ''; //prevent infinite create
@@ -314,11 +328,13 @@ var Game = function () {
 			this.player2.render(svg);
 
 			this.ball.render(svg, this.player1, this.player2);
-			// this.ball2.render(svg);
+			this.ball2.render(svg, this.player1, this.player2);
 			// this.ball3.render(svg);
 
 			this.score1.render(svg, this.player1.score); //score is attached to player1/2 in the paddle class
 			this.score2.render(svg, this.player2.score);
+
+			this.message.render(svg, this.currentMessage);
 		}
 	}]);
 
@@ -334,10 +350,10 @@ exports.default = Game;
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(9);
+var content = __webpack_require__(10);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(14)(content, {});
+var update = __webpack_require__(15)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -370,7 +386,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // create a game instance, instantiating Game
 var game = new _Game2.default('game', 512, 256);
-// reference to div id=game, giving it width and height
+// reference to index.html div id=game, giving it width and height
 (function gameLoop() {
     game.render();
     // console.log('something')
@@ -405,7 +421,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Ball = function () {
-  function Ball(radius, boardWidth, boardHeight) {
+  function Ball(radius, boardWidth, boardHeight, game) {
     _classCallCheck(this, Ball);
 
     this.radius = radius;
@@ -415,6 +431,7 @@ var Ball = function () {
     this.reset();
 
     this.ping = new Audio('public/sounds/pong-01.wav');
+    this.game = game;
   }
 
   _createClass(Ball, [{
@@ -484,8 +501,19 @@ var Ball = function () {
     key: 'goal',
     value: function goal(playerPassIn) {
       playerPassIn.score++;
+      this.gameFin(playerPassIn); //check if game is over
       this.reset();
       console.log(playerPassIn.score);
+    }
+  }, {
+    key: 'gameFin',
+    value: function gameFin(playerPassIn) {
+      if (playerPassIn.score === 10) {
+        this.game.currentMessage = 'Game set!';
+        this.game.pause = true;
+        this.game.gameOver = true;
+        // move reset here, if 10 pause, if not 10 reset
+      }
     }
   }, {
     key: 'render',
@@ -592,6 +620,52 @@ var _settings = __webpack_require__(0);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Message = function () {
+    function Message(x, y, size) {
+        _classCallCheck(this, Message);
+
+        this.x = x;
+        this.y = y;
+        this.size = size;
+    }
+
+    _createClass(Message, [{
+        key: 'render',
+        value: function render(svg, message) {
+            var text = document.createElementNS(_settings.SVG_NS, 'text');
+            text.setAttributeNS(null, 'x', this.x);
+            text.setAttributeNS(null, 'y', this.y);
+            text.setAttributeNS(null, 'font-family', '"Silkscreen Web", monotype');
+            text.setAttributeNS(null, 'font-size', this.size);
+            text.setAttributeNS(null, 'fill', 'white');
+            text.textContent = message;
+            svg.appendChild(text);
+            // console.log(message);
+        }
+    }]);
+
+    return Message;
+}();
+
+exports.default = Message;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _settings = __webpack_require__(0);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var Score = function () {
     function Score(x, y, size) {
         _classCallCheck(this, Score);
@@ -621,21 +695,21 @@ var Score = function () {
 exports.default = Score;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(10)();
+exports = module.exports = __webpack_require__(11)();
 // imports
 
 
 // module
-exports.push([module.i, "/* http://meyerweb.com/eric/tools/css/reset/ \n   v2.0 | 20110126\n   License: none (public domain)\n*/\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\nb, u, i, center,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td,\narticle, aside, canvas, details, embed, \nfigure, figcaption, footer, header, hgroup, \nmenu, nav, output, ruby, section, summary,\ntime, mark, audio, video {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\tfont-size: 100%;\n\tfont: inherit;\n\tvertical-align: baseline;\n}\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure, \nfooter, header, hgroup, menu, nav, section {\n\tdisplay: block;\n}\nbody {\n\tline-height: 1;\n}\nol, ul {\n\tlist-style: none;\n}\nblockquote, q {\n\tquotes: none;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: '';\n\tcontent: none;\n}\ntable {\n\tborder-collapse: collapse;\n\tborder-spacing: 0;\n}\n\n/**\n * FONTS\n */\n\n@font-face {\n  font-family: 'Silkscreen Web';\n  src: url(" + __webpack_require__(2) + ");\n  src: url(" + __webpack_require__(2) + "?#iefix) format('embedded-opentype'),\n    url(" + __webpack_require__(13) + ") format('woff'),\n    url(" + __webpack_require__(12) + ") format('truetype'),\n    url(" + __webpack_require__(11) + "#silkscreennormal) format('svg');\n  font-weight: normal;\n  font-style: normal;\n}\n\n/**\n * GAME\n */\n\nhtml {\n  font-size: 16px;\n}\n\nbody {\n  align-items: center;\n  display: flex;\n  font-family: 'Silkscreen Web', monotype;\n  height: 100vh;\n  justify-content: center;\n  width: 100%;\n}\n\nh1 {\n  font-size: 2.5rem;\n  margin-bottom: 1rem; \n  text-align: center;\n}\n", ""]);
+exports.push([module.i, "/* http://meyerweb.com/eric/tools/css/reset/ \n   v2.0 | 20110126\n   License: none (public domain)\n*/\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\nb, u, i, center,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td,\narticle, aside, canvas, details, embed, \nfigure, figcaption, footer, header, hgroup, \nmenu, nav, output, ruby, section, summary,\ntime, mark, audio, video {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\tfont-size: 100%;\n\tfont: inherit;\n\tvertical-align: baseline;\n}\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure, \nfooter, header, hgroup, menu, nav, section {\n\tdisplay: block;\n}\nbody {\n\tline-height: 1;\n}\nol, ul {\n\tlist-style: none;\n}\nblockquote, q {\n\tquotes: none;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: '';\n\tcontent: none;\n}\ntable {\n\tborder-collapse: collapse;\n\tborder-spacing: 0;\n}\n\n/**\n * FONTS\n */\n\n@font-face {\n  font-family: 'Silkscreen Web';\n  src: url(" + __webpack_require__(2) + ");\n  src: url(" + __webpack_require__(2) + "?#iefix) format('embedded-opentype'),\n    url(" + __webpack_require__(14) + ") format('woff'),\n    url(" + __webpack_require__(13) + ") format('truetype'),\n    url(" + __webpack_require__(12) + "#silkscreennormal) format('svg');\n  font-weight: normal;\n  font-style: normal;\n}\n\n/**\n * GAME\n */\n\nhtml {\n  font-size: 16px;\n}\n\nbody {\n  align-items: center;\n  display: flex;\n  font-family: 'Silkscreen Web', monotype;\n  height: 100vh;\n  justify-content: center;\n  width: 100%;\n}\n\nh1 {\n  font-size: 2.5rem;\n  margin-bottom: 1rem; \n  text-align: center;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 /*
@@ -691,25 +765,25 @@ module.exports = function() {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "public/fonts/slkscr-webfont.svg";
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "public/fonts/slkscr-webfont.ttf";
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "public/fonts/slkscr-webfont.woff";
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 /*

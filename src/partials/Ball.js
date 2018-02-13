@@ -77,8 +77,8 @@ export default class Ball {
     }
 
     gameFin(playerPassIn){
-      if (playerPassIn.score === 5) {
-        this.game.currentMessage = 'David was here';
+      if (playerPassIn.score === 10) {
+        this.game.currentMessage = 'Game set!';
         this.game.pause = true;
         this.game.gameOver = true;
         // move reset here, if 10 pause, if not 10 reset

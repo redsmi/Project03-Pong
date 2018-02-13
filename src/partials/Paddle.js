@@ -20,16 +20,6 @@ export default class Paddle {
         this.keyState[event.key || event.which] = false;
       }, true);
 
-      // document.addEventListener('keydown', event => {
-      //   switch (event.key) {
-      //       case up:
-      //         this.moveUp();
-      //         break;
-      //       case down:
-      //         this.moveDown();
-      //         break;
-      //     }
-      // }); //key event end
     } // constructor end
 
 
